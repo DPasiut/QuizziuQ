@@ -1,11 +1,36 @@
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {StyleSheet, Text, View, Button, TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
 import {StackActions} from "@react-navigation/routers";
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import ResultDataBox from "./ResultDataBox";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ResultsFlatList from "./ResultsFlatList";
+
+
+const setRulesTrue = async (nav) => {
+    storeData('true').then(nav.navigate('Home'))
+
+}
+const storeData = async (value) => {
+    try {
+        await AsyncStorage.setItem('@storage_Key', value)
+    } catch (e) {
+        // saving error
+    }
+}
+const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('@storage_Key')
+        if (value !== null) {
+            return value;
+        }
+    } catch (e) {
+        // error reading value
+    }
+}
 
 
 class QuizBox extends Component {
@@ -36,49 +61,47 @@ class AnswerButton extends Component {
     }
 }
 
-/*class Data extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            HeadTable: ['Nick', 'Points', 'Type', 'Data'],
-            DataTable: [
-                ['Nick1', '10/20', 'type1', '21-11-2018'],
-                ['Nick2', '15/20', 'type1', '21-11-2018'],
-                ['Nick3', '8/20', 'type1', '21-11-2018'],
-                ['Nick4', '20/20', 'type1', '21-11-2018'],
-            ]
-        }
-    }
-    render() {
-        const state = this.state;
-        return(
+function RulesScreen({navigation}) {
+    useEffect(() => {
+        getData().then(value => {
+            if (value === 'true') {
+                navigation.navigate('Home')
+            }
+        })
+    })
+    return (
         <SafeAreaView>
-            <View style={styles.container}>
-                <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}>
-                    <Row data={state.HeadTable} style={styles.HeadStyle} textStyle={styles.TableText}/>
-                    <Rows data={state.DataTable} textStyle={styles.TableText}/>
-                </Table>
+            <View style={styles.rulesScreen}>
+                <Text>Rules</Text>
+                <View style={styles.rulesText}>
+                    <Text>żadnych zasad, niech poleje się krew!</Text>
+                    <Text>żadnych zasad, niech poleje się krew!</Text>
+                    <Text>żadnych zasad, niech poleje się krew!</Text>
+                    <Text>żadnych zasad, niech poleje się krew!</Text>
+                </View>
+                <TouchableOpacity style={styles.answerButton} onPress={() => setRulesTrue(navigation)}>
+                    <Text>Agree</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
-        )
-    }
-}*/
+    )
+}
 
 function HomeScreen({navigation}) {
     return (
         <SafeAreaView>
             <ScrollView>
-                <QuizBox title={"Quiz1"} onClick={() => navigation.navigate('Test')} tag1={"#Tag1"} tag2={"#Tag2"}
+                <QuizBox title={"Quiz1"} onClick={() => navigation.navigate('Quiz1Screen')} tag1={"#Tag1"} tag2={"#Tag2"}
                          text={"W tym miejscu odpowiemy sobie na jedno ważne pytanie, ale to zaj***e ważne pytanie"}/>
-                <QuizBox title={"Quiz2"} onClick={() => navigation.navigate('Test')} tag1={"#Tag1"} tag2={"#Tag2"}
+                <QuizBox title={"Quiz2"} onClick={() => navigation.navigate('Quiz2Screen')} tag1={"#Tag1"} tag2={"#Tag2"}
                          text={"W tym miejscu odpowiemy sobie na jedno ważne pytanie, ale to zaj***e ważne pytanie"}/>
-                <QuizBox title={"Quiz3"} onClick={() => navigation.navigate('Test')} tag1={"#Tag1"} tag2={"#Tag2"}
+                <QuizBox title={"Quiz3"} onClick={() => navigation.navigate('Quiz3Screen')} tag1={"#Tag1"} tag2={"#Tag2"}
                          text={"W tym miejscu odpowiemy sobie na jedno ważne pytanie, ale to zaj***e ważne pytanie"}/>
-                <QuizBox title={"Quiz4"} onClick={() => navigation.navigate('Test')} tag1={"#Tag1"} tag2={"#Tag2"}
+                <QuizBox title={"Quiz4"} onClick={() => navigation.navigate('Quiz4Screen')} tag1={"#Tag1"} tag2={"#Tag2"}
                          text={"W tym miejscu odpowiemy sobie na jedno ważne pytanie, ale to zaj***e ważne pytanie"}/>
                 <View style={styles.stopka}>
                     <Text style={styles.checkResultText}>Get to know your result</Text>
-                    <TouchableOpacity style={styles.answerButton} onPress={()=> navigation.navigate('Result')}>
+                    <TouchableOpacity style={styles.answerButton} onPress={() => navigation.navigate('Result')}>
                         <Text>Check!</Text>
                     </TouchableOpacity>
                 </View>
@@ -87,6 +110,95 @@ function HomeScreen({navigation}) {
     );
 }
 
+
+function Quiz1Screen({navigation}) {
+    return (
+        <SafeAreaView>
+            <View style={styles.flexRow}>
+                <Text style={styles.testQuestionNumber}>Question 3 of 10</Text>
+                <Text style={styles.testTimeLeft}>Time: 28 sec</Text>
+            </View>
+            <View style={styles.testTimeBar}>
+                <View style={styles.testTime}></View>
+                <View></View>
+            </View>
+            <Text style={styles.categoryQuestions}>{"questionType"}</Text>
+            <Text style={styles.question}>{"Question"}</Text>
+            <View style={styles.answerBox}>
+                <AnswerButton title={"Answer A"}/>
+                <AnswerButton title={"Answer B"}/>
+                <AnswerButton title={"Answer C"}/>
+                <AnswerButton title={"Answer D"}/>
+            </View>
+        </SafeAreaView>
+    );
+}
+function Quiz2Screen({navigation}) {
+    return (
+        <SafeAreaView>
+            <View style={styles.flexRow}>
+                <Text style={styles.testQuestionNumber}>Question 3 of 10</Text>
+                <Text style={styles.testTimeLeft}>Time: 28 sec</Text>
+            </View>
+            <View style={styles.testTimeBar}>
+                <View style={styles.testTime}></View>
+                <View></View>
+            </View>
+            <Text style={styles.categoryQuestions}>Quiz 1</Text>
+            <Text style={styles.question}>A co jeśli Sasin nigdy nie odpowie za zmarnotrawione 70 mln?</Text>
+            <View style={styles.answerBox}>
+                <AnswerButton title={"Answer A"}/>
+                <AnswerButton title={"Answer B"}/>
+                <AnswerButton title={"Answer C"}/>
+                <AnswerButton title={"Answer D"}/>
+            </View>
+        </SafeAreaView>
+    );
+}
+function Quiz3Screen({navigation}) {
+    return (
+        <SafeAreaView>
+            <View style={styles.flexRow}>
+                <Text style={styles.testQuestionNumber}>Question 3 of 10</Text>
+                <Text style={styles.testTimeLeft}>Time: 28 sec</Text>
+            </View>
+            <View style={styles.testTimeBar}>
+                <View style={styles.testTime}></View>
+                <View></View>
+            </View>
+            <Text style={styles.categoryQuestions}>Quiz 1</Text>
+            <Text style={styles.question}>A co jeśli Sasin nigdy nie odpowie za zmarnotrawione 70 mln?</Text>
+            <View style={styles.answerBox}>
+                <AnswerButton title={"Answer A"}/>
+                <AnswerButton title={"Answer B"}/>
+                <AnswerButton title={"Answer C"}/>
+                <AnswerButton title={"Answer D"}/>
+            </View>
+        </SafeAreaView>
+    );
+}
+function Quiz4Screen({navigation}) {
+    return (
+        <SafeAreaView>
+            <View style={styles.flexRow}>
+                <Text style={styles.testQuestionNumber}>Question 3 of 10</Text>
+                <Text style={styles.testTimeLeft}>Time: 28 sec</Text>
+            </View>
+            <View style={styles.testTimeBar}>
+                <View style={styles.testTime}></View>
+                <View></View>
+            </View>
+            <Text style={styles.categoryQuestions}>Quiz 1</Text>
+            <Text style={styles.question}>A co jeśli Sasin nigdy nie odpowie za zmarnotrawione 70 mln?</Text>
+            <View style={styles.answerBox}>
+                <AnswerButton title={"Answer A"}/>
+                <AnswerButton title={"Answer B"}/>
+                <AnswerButton title={"Answer C"}/>
+                <AnswerButton title={"Answer D"}/>
+            </View>
+        </SafeAreaView>
+    );
+}
 function TestScreen({navigation}) {
     return (
         <SafeAreaView>
@@ -116,7 +228,8 @@ function ResultsScreen({navigation}) {
 
         <SafeAreaView>
             <ScrollView>
-                <View style={styles.resultsTitle}>
+                <ResultsFlatList/>
+{/*                <View style={styles.resultsTitle}>
                     <Text style={styles.resultsTitleColumns}>User</Text>
                     <Text style={styles.resultsTitleColumns}>Points</Text>
                     <Text style={styles.resultsTitleColumns}>Type</Text>
@@ -125,28 +238,49 @@ function ResultsScreen({navigation}) {
                 <ResultDataBox user={"Nick1"} points={"10/10"} type={"Quiz 1"} date={"01-01-2020"}/>
                 <ResultDataBox user={"Nick2"} points={"10/10"} type={"Quiz 1"} date={"01-01-2020"}/>
                 <ResultDataBox user={"Nick3"} points={"10/10"} type={"Quiz 1"} date={"01-01-2020"}/>
-                <ResultDataBox user={"Nick4"} points={"10/10"} type={"Quiz 1"} date={"01-01-2020"}/>
+                <ResultDataBox user={"Nick4"} points={"10/10"} type={"Quiz 1"} date={"01-01-2020"}/>*/}
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom:20}}>
+                    <Text onPress={() => {
+                        navigation.dispatch(StackActions.popToTop());
+                        navigation.navigate('Home');
+                    }}>Home Screen</Text>
+                </View>
             </ScrollView>
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginTop:20}}>
-                <Text onPress={() => {
-                    navigation.dispatch(StackActions.popToTop());
-                    navigation.navigate('Home');
-                }}>Home Screen</Text>
-            </View>
+
         </SafeAreaView>
     );
 }
 
+function Home({navigation}) {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={HomeScreen}/>
+            <Stack.Screen name="Test" component={TestScreen}/>
+            <Stack.Screen name="Result" component={ResultsScreen}/>
+            <Stack.Screen name="Quiz1Screen" component={Quiz1Screen}/>
+            <Stack.Screen name="Quiz2Screen" component={Quiz2Screen}/>
+            <Stack.Screen name="Quiz3Screen" component={Quiz3Screen}/>
+            <Stack.Screen name="Quiz4Screen" component={Quiz4Screen}/>
+        </Stack.Navigator>
+    );
+}
+
+
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 function App() {
     return (
         <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name="Home" component={HomeScreen}/>
-                <Stack.Screen name="Test" component={TestScreen}/>
-                <Stack.Screen name="Result" component={ResultsScreen}/>
-            </Stack.Navigator>
+            <Drawer.Navigator initialRouteName="Rules">
+                <Drawer.Screen name="Home" component={Home}/>
+                <Drawer.Screen name="Result" component={ResultsScreen}/>
+                <Drawer.Screen name="Rules" component={RulesScreen}/>
+                <Drawer.Screen name="Quiz1Screen" component={Quiz1Screen}/>
+                <Drawer.Screen name="Quiz2Screen" component={Quiz2Screen}/>
+                <Drawer.Screen name="Quiz3Screen" component={Quiz3Screen}/>
+                <Drawer.Screen name="Quiz4Screen" component={Quiz4Screen}/>
+            </Drawer.Navigator>
         </NavigationContainer>
     );
 }
@@ -157,6 +291,31 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    resultListStyle: {
+        padding: 15,
+        marginBottom: 5,
+        color: "yellow",
+        backgroundColor: '#1A237E',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontFamily: "French Script MT",
+        marginRight: 20,
+        marginLeft: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#d6d7da',
+        textAlign: 'center',
+        fontSize: 20
+    },
+    rulesText:{
+        flexDirection: 'column',
+        marginTop: 30
+    },
+    rulesScreen: {
+        alignItems: 'center',
+        marginTop: 50,
+
     },
     quizBox: {
         borderWidth: 3,
@@ -199,32 +358,32 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         padding: 10,
         backgroundColor: '#D3D3D3',
-        alignItems:'center',
+        alignItems: 'center',
         width: 100
     },
     question: {
         marginLeft: 20,
-        marginBottom:5,
-        marginRight:20,
-        marginTop:20,
+        marginBottom: 5,
+        marginRight: 20,
+        marginTop: 20,
         fontWeight: 'bold',
-        textAlign:'center',
+        textAlign: 'center',
     },
     categoryQuestions: {
         marginLeft: 20,
-        marginBottom:5,
-        marginRight:20,
-        marginTop:20,
+        marginBottom: 5,
+        marginRight: 20,
+        marginTop: 20,
         fontSize: 20,
-        textAlign:'center',
+        textAlign: 'center',
     },
-    testTimeBar:{
+    testTimeBar: {
         flexDirection: "row",
         borderWidth: 1,
         margin: 10,
         marginBottom: 0,
     },
-    testTime:{
+    testTime: {
         backgroundColor: "#F9FF7D",
         flex: 0.7,
         height: 10,
@@ -247,14 +406,14 @@ const styles = StyleSheet.create({
     stopka: {
         borderWidth: 1,
         marginLeft: 5,
-        marginBottom:5,
-        marginRight:5,
-        marginTop:20,
+        marginBottom: 5,
+        marginRight: 5,
+        marginTop: 20,
         alignItems: 'center'
     },
     checkResultText: {
         fontSize: 20,
-        textAlign:'center',
+        textAlign: 'center',
     },
     resultsTitle: {
         flexDirection: 'row',
